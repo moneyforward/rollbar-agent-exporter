@@ -1,0 +1,9 @@
+*.pyc
+*.db
+rollbar_agent.egg-info/
+dist/
+.idea
+*.nix
+Pipfile
+Pipfile.lock
+.python-version
