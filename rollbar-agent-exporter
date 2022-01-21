@@ -20,7 +20,7 @@ def build_option_parser():
     parser = optparse.OptionParser()
 
     parser.add_option('-c', '--config', dest='config_file', action='store',
-                      default='rollbar-agent-exproser.conf', help='Path to configuration file. Default: rollbar-agent.conf in the working directory.')
+                      default='rollbar-agent-exporter.conf', help='Path to configuration file. Default: rollbar-agent.conf in the working directory.')
 
     return parser
 
@@ -39,6 +39,7 @@ def parse_config(filename):
         'statefile': '/var/cache/rollbar-agent.state',
         'sleep_time': '10',
         'state_proto': '0',
+        'port': '8000',
     }
 
     if sys.version_info >= (3, 2):
@@ -75,12 +76,13 @@ class ScannerThread(threading.Thread):
 
     def run(self):
         sleep_seconds = int(self.config['sleep_time'])
+        port = int(self.config['port'])
         g_pos = Gauge('pos_watcher', 'tracking change of pos',
                       ['filename'])
         g_inode = Gauge('inode_watcher', 'tracking change of inode',
                         ['filename'])
-        start_http_server(8000)
-        log.info("Start metric in port 8000")
+        start_http_server(port)
+        log.info("Start metric in port %s" % port)
         while not self.stop_event.is_set():
             log.info("scanner thread looping...")
             try:
