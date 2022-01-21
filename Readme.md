@@ -6,9 +6,10 @@
 This tool is used to monitor the state that the rollbar-agent saves as a file. Parameters like inode and pos are public as Gauge which prometheus supports on port :8000 .
 
 # How to run
-## config rollbar-agent-exporter.conf
+## Configuration rollbar-agent-exporter.conf
 - link ***statefile*** to rollbar-agent state
 - setup ***sleep_time***: every sleep_time second it will check the state file of rollbar-agent
+- setup ***port***: default is 8000
 ```
 statefile = /var/cache/rollbar-agent.state
 
