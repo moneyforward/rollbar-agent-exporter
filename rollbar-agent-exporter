@@ -106,7 +106,7 @@ class ScannerThread(threading.Thread):
 
     def load_state(self):
         try:
-            return shelve.open(self.config['statefile'],
+            return shelve.open(self.config['statefile'], flag='r',
                                protocol=int(self.config['state_proto']))
         except:
             log.error("Could not open statefile for writing. "
