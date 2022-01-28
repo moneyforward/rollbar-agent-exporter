@@ -106,8 +106,11 @@ class ScannerThread(threading.Thread):
 
     def load_state(self):
         try:
-            return shelve.open(self.config['statefile'],
-                               protocol=int(self.config['state_proto']))
+            if os.path.exists(self.config['statefile']) :
+                return shelve.open(self.config['statefile'],
+                                protocol=int(self.config['state_proto']))
+            else :
+                log.error("Perhaps the directory doesn't exist?")
         except:
             log.error("Could not open statefile for writing. "
                       "Perhaps the directory doesn't exist? "
