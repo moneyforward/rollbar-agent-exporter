@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import configparser
 import logging
 import optparse  # instead of argparse, for python2.6 compat
 import os
 import shelve
+import shutil
 import sys
 import signal
 import threading
@@ -37,6 +38,7 @@ def parse_config(filename):
 
     defaults = {
         'statefile': '/var/cache/rollbar-agent.state',
+        'targetfile': '/var/cache/rollbar-agent-copy.state',
         'sleep_time': '10',
         'state_proto': '0',
         'port': '8000',
@@ -106,13 +108,16 @@ class ScannerThread(threading.Thread):
 
     def load_state(self):
         try:
-            if os.path.exists(self.config['statefile']) :
-                return shelve.open(self.config['statefile'],
-                                protocol=int(self.config['state_proto']))
+            if os.path.exists(self.config['statefile']):
+                # remove old copy file if exists then copy state file
+                if os.path.exists(self.config['targetfile']):
+                    os.remove(self.config['targetfile'])
+                shutil.copy(self.config['statefile'], self.config['targetfile'])
+                return shelve.open(self.config['targetfile'])
             else :
                 log.error("Perhaps the directory doesn't exist?")
         except:
-            log.error("Could not open statefile for writing. "
+            log.error("Could not open statefile for reading. "
                       "Perhaps the directory doesn't exist? "
                       "You can configure this by modifying the 'statefile' in rollbar-agent.conf. "
                       "Current value is %s" % self.config['statefile'])
